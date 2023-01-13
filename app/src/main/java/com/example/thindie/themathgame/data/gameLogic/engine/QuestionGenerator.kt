@@ -10,16 +10,13 @@ import java.util.*
 
 class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Setting) {
 
-    private lateinit var gameSettings: GameSettings
+    private val gameSettings: GameSettings = initGameSettings()
 
-    init {
-        initGameSettings()
-    }
 
-    private fun initGameSettings() {
-        gameSettings = when (gotLevel.level) {
+    private fun initGameSettings(): GameSettings {
+        when (gotLevel.level) {
             Level.TEST -> {
-                GameSettings(
+                return GameSettings(
                     7,
                     3,
                     50,
@@ -27,7 +24,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 )
             }
             Level.EASY -> {
-                GameSettings(
+                return GameSettings(
                     25,
                     10,
                     50,
@@ -35,7 +32,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 )
             }
             Level.NORMAl -> {
-                GameSettings(
+                return GameSettings(
                     35,
                     20,
                     70,
@@ -43,7 +40,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 )
             }
             Level.HARD -> {
-                GameSettings(
+                return GameSettings(
                     35,
                     25,
                     90,
@@ -51,6 +48,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 )
             }
         }
+        return throw RuntimeException("GameSetting isn't init")
     }
 
     fun generateQuestion(): Question {
@@ -94,11 +92,10 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
     }
 
     companion object {
-        fun inject(
-            gameLogicActorImpl: GameLogicActorImpl,
+        fun prepare(
             level: OnUserResponceUseCase.Responce.Setting
-        ) {
-            gameLogicActorImpl.questionGenerator = QuestionGenerator(level)
+        ) : QuestionGenerator {
+           return  QuestionGenerator(level)
         }
 
         private const val MIN_VALUE = 2

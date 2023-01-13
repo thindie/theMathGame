@@ -7,9 +7,15 @@ import javax.inject.Inject
 class OnUserResponceUseCase @Inject constructor(private val mathGameRepository: MathGameRepository) {
     suspend operator fun invoke(level: Level?, right: Unit?) {
 
-        if (level != null) return mathGameRepository.onResponce(flow = flow { Responce.Setting(level) })
-        if (right != null) return mathGameRepository.onResponce(flow { Responce.Right(unit = right) })
-        else return mathGameRepository.onResponce(flow { Responce.Wrong(unit = Unit) })
+        if (level != null) return mathGameRepository.onResponce(flow = flow {
+            emit(
+                Responce.Setting(
+                    level
+                )
+            )
+        })
+        if (right != null) return mathGameRepository.onResponce(flow { emit(Responce.Right(unit = right)) })
+        else return mathGameRepository.onResponce(flow { emit(Responce.Wrong(unit = Unit)) })
     }
 
     sealed class Responce {

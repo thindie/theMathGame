@@ -4,13 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.thindie.presentation.ui.composables.Place
-import com.example.thindie.themathgame.domain.entities.Level
 import com.example.thindie.themathgame.presentation.theme.MathGameTheme
+import com.example.thindie.themathgame.presentation.theme.composables.GamingPlace
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -27,11 +28,27 @@ class MainActivity : ComponentActivity() {
                         is MainViewModel.UIResponce.Loading -> {
                             setContent {
                                 MathGameTheme {
-                                    Place(null) { viewModel.setGame(Level.TEST) }  // level -> Level
+                                    Place(null)
+                                    { level -> viewModel.setGame(level) } // level -> Level
                                 }
                             }
                         }
-                        else -> {}
+                        is MainViewModel.UIResponce.Circular -> {
+                            setContent {
+                                MathGameTheme {
+                                    CircularProgressIndicator()
+                                }
+                            }
+
+                        }
+                        else -> {
+                            setContent {
+                                MathGameTheme {
+                                    GamingPlace()
+
+                                }
+                            }
+                        }
                     }
                 }
             }
