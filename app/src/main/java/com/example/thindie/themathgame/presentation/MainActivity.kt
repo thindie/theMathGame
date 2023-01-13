@@ -41,11 +41,16 @@ class MainActivity : ComponentActivity() {
                             }
 
                         }
-                        else -> {
+                        is MainViewModel.UIResponce.AskQuestion -> {
+
                             setContent {
                                 MathGameTheme {
-                                    GamingPlace()
-
+                                    GamingPlace(
+                                        it.question
+                                    ) { answer: Boolean ->
+                                        if (answer) viewModel.rightAnswer()
+                                        else viewModel.wrongAnswer()
+                                    }
                                 }
                             }
                         }
@@ -54,4 +59,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
