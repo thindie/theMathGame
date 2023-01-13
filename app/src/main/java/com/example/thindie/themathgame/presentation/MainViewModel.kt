@@ -7,9 +7,8 @@ import com.example.thindie.themathgame.domain.entities.Question
 import com.example.thindie.themathgame.domain.useCase.OnUserRequestUseCase
 import com.example.thindie.themathgame.domain.useCase.OnUserResponceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ class MainViewModel @Inject constructor(
     private val onUserResponceUseCase: OnUserResponceUseCase
 ) : ViewModel() {
 
-    val _uiState : MutableStateFlow<UIResponce> = MutableStateFlow(UIResponce.Loading(Unit))
+    val _uiState: MutableStateFlow<UIResponce> = MutableStateFlow(UIResponce.Loading(Unit))
 
     init {
         _uiState.value = UIResponce.Loading(Unit)
@@ -27,31 +26,29 @@ class MainViewModel @Inject constructor(
 
     fun setGame(level: Level) {
         viewModelScope.launch {
-            val setGameFlow: Flow<OnUserResponceUseCase.Responce> = flow {
-                onUserResponceUseCase.invoke(level, null)
-            }
+            onUserResponceUseCase.invoke(level, null)
+            _uiState.value = UIResponce.Circular(Unit)
+            delay(1000)
+            requestQuestion()
         }
     }
 
     fun wrongAnswer() {
         viewModelScope.launch {
-            val setGameFlow: Flow<OnUserResponceUseCase.Responce> = flow {
-                onUserResponceUseCase.invoke(null, null)
-            }
+            onUserResponceUseCase.invoke(null, null)
         }
     }
 
     fun rightAnswer() {
         viewModelScope.launch {
-            val setGameFlow: Flow<OnUserResponceUseCase.Responce> = flow {
-                onUserResponceUseCase.invoke(null, Unit)
-            }
+            onUserResponceUseCase.invoke(null, Unit)
         }
     }
 
     fun requestQuestion() {
         viewModelScope.launch {
-            onUserRequestUseCase.invoke().collect{
+            onUserRequestUseCase.invoke().collect {
+                val question = it
                 _uiState.value = UIResponce.AskQuestion(it)
             }
         }
@@ -60,6 +57,7 @@ class MainViewModel @Inject constructor(
 
     sealed class UIResponce {
         data class AskQuestion(val question: Question) : UIResponce()
+        data class Circular(val unit: Unit) : UIResponce()
         data class Wrong(val unit: Unit) : UIResponce()
         data class Right(val unit: Unit) : UIResponce()
         data class Result(val unit: Unit) : UIResponce()

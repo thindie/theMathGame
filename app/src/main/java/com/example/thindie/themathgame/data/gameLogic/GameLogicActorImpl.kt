@@ -1,5 +1,6 @@
 package com.example.thindie.themathgame.data.gameLogic
 
+import android.util.Log
 import com.example.thindie.themathgame.data.gameLogic.engine.QuestionGenerator
 import com.example.thindie.themathgame.domain.entities.Question
 import com.example.thindie.themathgame.domain.useCase.OnUserResponceUseCase
@@ -11,24 +12,27 @@ import javax.inject.Inject
 
 //      First <Responce> MUST be Responce.Setting from UI
 //
-class GameLogicActorImpl @Inject constructor() : GameLogicActor {
+
+object GameLogicActorImpl  : GameLogicActor {
 
     lateinit var questionGenerator: QuestionGenerator
 
     override suspend fun onAnswer(task: Flow<OnUserResponceUseCase.Responce>) {
+        Log.d("SERVICE_TAG", this.hashCode().toString())
         task.collect { responce ->
             when (responce) {
                 is OnUserResponceUseCase.Responce.Setting -> {
-                    QuestionGenerator.inject(this, responce)
+                   questionGenerator = QuestionGenerator.prepare(responce)
                 }
                 is OnUserResponceUseCase.Responce.Right -> {}
                 is OnUserResponceUseCase.Responce.Wrong -> {}
             }
-            onQuestion()
+
         }
     }
 
     override fun onQuestion(): Flow<Question> {
+        Log.d("SERVICE_TAG",this.hashCode().toString())
         return flow {
             emit(
                 questionGenerator.generateQuestion()
