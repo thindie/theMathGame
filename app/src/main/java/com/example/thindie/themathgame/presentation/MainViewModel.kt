@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             onUserResponceUseCase.invoke(null, null)
             onRequestScore()
-            delay(20)
+            delay(40)
             onRequestQuestion()
         }
     }
@@ -62,7 +62,7 @@ class MainViewModel @Inject constructor(
             _uiState.value = UIResponce.Right(Unit)
             onUserResponceUseCase.invoke(null, timeSpend = timeSpend)
             onRequestScore()
-            delay(20)
+            delay(40)
             onRequestQuestion()
         }
     }
