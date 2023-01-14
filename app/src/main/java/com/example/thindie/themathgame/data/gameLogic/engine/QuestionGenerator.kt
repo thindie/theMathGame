@@ -1,6 +1,5 @@
 package com.example.thindie.themathgame.data.gameLogic.engine
 
-import com.example.thindie.themathgame.data.gameLogic.GameLogicActorImpl
 import com.example.thindie.themathgame.domain.entities.GameSettings
 import com.example.thindie.themathgame.domain.entities.Level
 import com.example.thindie.themathgame.domain.entities.Question
@@ -11,7 +10,7 @@ import java.util.*
 class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Setting) {
 
     private val gameSettings: GameSettings = initGameSettings()
-
+    
 
     private fun initGameSettings(): GameSettings {
         when (gotLevel.level) {
@@ -91,13 +90,18 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
         )
     }
 
+    fun shareGamesettings(): GameSettings {
+        return gameSettings
+    }
+
     companion object {
-        fun prepare(
+        fun build(
             level: OnUserResponceUseCase.Responce.Setting
-        ) : QuestionGenerator {
-           return  QuestionGenerator(level)
+        ): QuestionGenerator {
+            return QuestionGenerator(level)
         }
 
+         
         private const val MIN_VALUE = 2
         private const val TEST = 5
         private const val EASY = 8

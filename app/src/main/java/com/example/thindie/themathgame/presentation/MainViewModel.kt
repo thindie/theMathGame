@@ -29,26 +29,25 @@ class MainViewModel @Inject constructor(
             onUserResponceUseCase.invoke(level, null)
             _uiState.value = UIResponce.Circular(Unit)
             delay(1000)
-            requestQuestion()
+            onRequestQuestion()
         }
     }
 
-    fun wrongAnswer() {
+    fun onWrongAnswer() {
         viewModelScope.launch {
             onUserResponceUseCase.invoke(null, null)
         }
     }
 
-    fun rightAnswer() {
+    fun onRightAnswer(timeSpend: Long) {
         viewModelScope.launch {
-            onUserResponceUseCase.invoke(null, Unit)
+            onUserResponceUseCase.invoke(null, timeSpend = timeSpend)
         }
     }
 
-    fun requestQuestion() {
+    fun onRequestQuestion() {
         viewModelScope.launch {
             onUserRequestUseCase.invoke().collect {
-                val question = it
                 _uiState.value = UIResponce.AskQuestion(it)
             }
         }

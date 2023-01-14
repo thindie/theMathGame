@@ -9,13 +9,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.thindie.themathgame.domain.entities.Level
 import com.example.thindie.themathgame.domain.entities.Question
 
 @Composable
 fun GamingPlace(
     question: Question,
-    onClick: (Boolean) -> Unit
+    onClick: (Long?) -> Unit
 ) {
     val modifier = Modifier
         .fillMaxWidth()
@@ -58,6 +57,7 @@ fun GamingPlace(
                             answer = question.solution,
                             variant = item,
                             padding = PaddingValues(all = 5.dp),
+                            time = question.timeSpendOn,
                             onClick = onClick
                         )
                     }

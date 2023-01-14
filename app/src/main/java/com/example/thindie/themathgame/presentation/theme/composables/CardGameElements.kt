@@ -58,7 +58,8 @@ fun GameElement(
     answer: Int,
     variant: Int,
     padding: PaddingValues,
-    onClick: (Boolean) -> Unit,
+    time: Long,
+    onClick: (Long?) -> Unit,
 
     ) {
 
@@ -67,7 +68,7 @@ fun GameElement(
         .size(130.dp)
         .padding(padding)
     ElevatedCard(
-        modifier = modifier.clickable { onClick(answer == variant) },
+        modifier = modifier.clickable { if (answer == variant) onClick(time) else onClick(null) },
         shape = Shapes.extraLarge
     ) {
         Box(

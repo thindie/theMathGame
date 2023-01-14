@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class OnUserResponceUseCase @Inject constructor(private val mathGameRepository: MathGameRepository) {
-    suspend operator fun invoke(level: Level?, right: Unit?) {
+    suspend operator fun invoke(level: Level?, timeSpend: Long?) {
         if (level != null) return mathGameRepository.onResponce(flow = flow {
             emit(
                 Responce.Setting(
@@ -16,9 +16,10 @@ class OnUserResponceUseCase @Inject constructor(private val mathGameRepository: 
             )
         }.flowOn(Dispatchers.IO))
 
-        return if (right != null) mathGameRepository.onResponce(
-            flow { emit(Responce.Right(unit = right)) }.flowOn(
+        return if (timeSpend != null) mathGameRepository.onResponce(
+            flow { emit(Responce.Right(timeSpend))  }.flowOn(
                 Dispatchers.IO
+
             )
         )
 
@@ -32,7 +33,7 @@ class OnUserResponceUseCase @Inject constructor(private val mathGameRepository: 
     sealed class Responce {
         data class Setting(val level: Level) : Responce()
         data class Wrong(val unit: Unit) : Responce()
-        data class Right(val unit: Unit) : Responce()
+        data class Right(val timeSpend: Long) : Responce()
     }
 
 
