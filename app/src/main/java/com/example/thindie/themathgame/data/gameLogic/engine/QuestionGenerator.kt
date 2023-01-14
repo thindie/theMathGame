@@ -86,7 +86,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
             sum = sum,
             visibleNumber = visibleNumber,
             solution = solution,
-            listOfVariants = list.toList()
+            listOfVariants = list.toMutableList().apply { shuffle() }
         )
     }
 

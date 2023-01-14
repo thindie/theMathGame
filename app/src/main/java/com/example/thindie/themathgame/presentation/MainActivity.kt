@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.thindie.presentation.ui.composables.Place
 import com.example.thindie.themathgame.presentation.theme.MathGameTheme
 import com.example.thindie.themathgame.presentation.theme.composables.GamingPlace
+import com.example.thindie.themathgame.presentation.theme.composables.Right
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -51,10 +52,18 @@ class MainActivity : ComponentActivity() {
                             setContent {
                                 MathGameTheme {
                                     GamingPlace(
-                                        it.question
+                                        it.question,
+                                        viewModel,
                                     ) {
                                         onClick(it)
                                     }
+                                }
+                            }
+                        }
+                        is MainViewModel.UIResponce.Right -> {
+                            setContent {
+                                MathGameTheme {
+                                    Right()
                                 }
                             }
                         }

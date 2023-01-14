@@ -42,17 +42,13 @@ object GameLogicActorImpl : GameLogicActor {
     }
 
 
-    override fun onResult(gameResults: GameResults): Flow<GameResults> {
-        return flow {
-            emit(
-                gameResults
-            )
-        }.flowOn(Dispatchers.IO)
+    override fun onResult(): Flow<GameResults> {
+        return resultInGameBuilder.flowOfResults()
     }
 
     override fun initQuestionGeneratorAndResultBuilder(responce: OnUserResponceUseCase.Responce.Setting) {
         questionGenerator = QuestionGenerator.build(responce)
 
-        resultInGameBuilder = ResultInGameBuilder.build(questionGenerator.shareGamesettings(), this)
+        resultInGameBuilder = ResultInGameBuilder.build(questionGenerator.shareGamesettings())
     }
 }

@@ -6,16 +6,23 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.thindie.themathgame.domain.entities.Question
+import com.example.thindie.themathgame.presentation.MainViewModel
 
 @Composable
 fun GamingPlace(
     question: Question,
+    viewModel: MainViewModel,
     onClick: (Long?) -> Unit
 ) {
+
+    val toShowScores = viewModel._resultState.collectAsState().value.gameResults.gameScore
+
     val modifier = Modifier
         .fillMaxWidth()
         .height(350.dp)
@@ -37,12 +44,14 @@ fun GamingPlace(
                             header = question.visibleNumber.toString(),
                             padding = PaddingValues(30.dp)
                         )
-                        Spacer(modifier = Modifier.weight(0.3f))
+                        Spacer(modifier = Modifier.weight(0.1f))
+                        Text(text = "Score : ".plus(toShowScores), Modifier.padding(top = 10.dp))
+                        Spacer(modifier = Modifier.weight(0.1f))
                         VisionElement(
                             header = "?",
                             padding = PaddingValues(30.dp),
 
-                        )
+                            )
                     }
                 }
             }
