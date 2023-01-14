@@ -11,7 +11,7 @@ import dagger.hilt.components.SingletonComponent
 class DataEngineSourceModule {
 
     @Provides
-    fun provideGameLogicActor(): GameLogicActorImpl{
+    fun provideGameLogicActor(): GameLogicActorImpl {
         return GameLogicActorImpl
     }
 }

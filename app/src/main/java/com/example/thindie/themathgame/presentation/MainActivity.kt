@@ -41,11 +41,20 @@ class MainActivity : ComponentActivity() {
                             }
 
                         }
-                        else -> {
+                        is MainViewModel.UIResponce.AskQuestion -> {
+
+                            val onClick: (Long?) -> Unit = { answerTime: Long? ->
+                                if (answerTime != null) viewModel.onRightAnswer(answerTime)
+                                else viewModel.onWrongAnswer()
+                            }
+
                             setContent {
                                 MathGameTheme {
-                                    GamingPlace()
-
+                                    GamingPlace(
+                                        it.question
+                                    ) {
+                                        onClick(it)
+                                    }
                                 }
                             }
                         }
@@ -54,4 +63,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
+

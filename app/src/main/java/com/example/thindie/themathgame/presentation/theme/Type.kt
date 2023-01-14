@@ -10,9 +10,9 @@ import com.example.thindie.themathgame.R
 
 
 private val light = Font(R.font.dsm, FontWeight.W300)
-private val regular = Font(R.font.mit, FontWeight.W400)
-private val medium = Font(R.font.mret, FontWeight.W500)
-private val semibold = Font(R.font.mb, FontWeight.W600)
+private val regular = Font(R.font.dsm, FontWeight.W400)
+private val medium = Font(R.font.dsm, FontWeight.W500)
+private val semibold = Font(R.font.dsm, FontWeight.W600)
 
 private val TheMathGame = FontFamily(fonts = listOf(light, regular, medium, semibold))
 
