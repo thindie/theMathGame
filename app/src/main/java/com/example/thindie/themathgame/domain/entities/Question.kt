@@ -5,7 +5,7 @@ data class Question(
     val sum: Int,
     val visibleNumber: Int,
     val solution: Int,
-    val listOfVariants: List<Int>,
+    val listOfVariants: MutableList<Int>,
     val timeSpendOn: Long = System.currentTimeMillis()
 )
 

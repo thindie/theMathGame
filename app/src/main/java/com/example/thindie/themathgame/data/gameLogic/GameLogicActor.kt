@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface GameLogicActor {
     suspend fun onAnswer(task : Flow<OnUserResponceUseCase.Responce>)
     fun onQuestion(): Flow<Question>
-    fun onResult(gameResults: GameResults): Flow<GameResults>
+    fun onResult(): Flow<GameResults>
     fun initQuestionGeneratorAndResultBuilder(responce: OnUserResponceUseCase.Responce.Setting)
 }
