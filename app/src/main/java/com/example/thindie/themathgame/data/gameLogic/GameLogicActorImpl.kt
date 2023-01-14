@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
 //      First <Responce> MUST be Responce.Setting from UI
 //
@@ -43,8 +42,12 @@ object GameLogicActorImpl : GameLogicActor {
     }
 
 
-    override fun onResult(): Flow<GameResults> {
-        TODO()
+    override fun onResult(gameResults: GameResults): Flow<GameResults> {
+        return flow {
+            emit(
+                gameResults
+            )
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun initQuestionGeneratorAndResultBuilder(responce: OnUserResponceUseCase.Responce.Setting) {

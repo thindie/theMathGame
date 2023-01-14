@@ -36,12 +36,16 @@ class MainViewModel @Inject constructor(
     fun onWrongAnswer() {
         viewModelScope.launch {
             onUserResponceUseCase.invoke(null, null)
+            delay(200)
+            onRequestQuestion()
         }
     }
 
     fun onRightAnswer(timeSpend: Long) {
         viewModelScope.launch {
             onUserResponceUseCase.invoke(null, timeSpend = timeSpend)
+            delay(200)
+            onRequestQuestion()
         }
     }
 
