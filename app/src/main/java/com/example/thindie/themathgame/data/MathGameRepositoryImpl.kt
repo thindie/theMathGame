@@ -1,6 +1,5 @@
 package com.example.thindie.themathgame.data
 
-import android.util.Log
 import com.example.thindie.themathgame.data.gameLogic.GameLogicActor
 import com.example.thindie.themathgame.domain.entities.GameResults
 import com.example.thindie.themathgame.domain.entities.Question

@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel._uiState.collect {
+                viewModel.uiState.collect {
                     when (it) {
                         is MainViewModel.UIResponce.Loading -> {
                             setContent {
@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                        else -> {}
                     }
                 }
             }
