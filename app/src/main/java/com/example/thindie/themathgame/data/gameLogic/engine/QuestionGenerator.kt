@@ -88,7 +88,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
         )
     }
 
-    fun shareGamesettings(): GameSettings = gameSettings
+    fun getGameSettings(): GameSettings = gameSettings
 
 
     companion object {

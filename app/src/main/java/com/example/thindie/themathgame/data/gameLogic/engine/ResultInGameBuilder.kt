@@ -25,6 +25,7 @@ class ResultInGameBuilder(
                     null,
                     null,
                     INITIAL,
+                    null,
                     null
                 )
             )
@@ -58,7 +59,8 @@ class ResultInGameBuilder(
                 null,
                 null,
                 gameScore = collectAllScoresInAnswerCollector(),
-                null
+                null,
+                null,
             )
 
         onNewGame(gameResults)
@@ -95,7 +97,7 @@ class ResultInGameBuilder(
         val totalQuestions = answerCollector.size
         val gameScore = collectAllScoresInAnswerCollector()
         val winRate = ((solvedQuestions * NEVERMIND / totalQuestions) * BECOME_PERCENT).toInt()
-        return GameResults(solvedQuestions, totalQuestions, true, gameScore, winRate)
+        return GameResults(solvedQuestions, totalQuestions, true, gameScore, winRate, null)
     }
 
     private fun scoreCalculator(time: Long, gameSettings: GameSettings): Int {

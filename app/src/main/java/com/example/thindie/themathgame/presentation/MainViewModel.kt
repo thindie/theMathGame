@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
     val resultState: MutableStateFlow<UIResponce.Result> =
         MutableStateFlow(
             UIResponce.Result(
-                DEFAULT_RESULT
+                INITIAL_RESULT
             )
         )
 
@@ -34,14 +34,24 @@ class MainViewModel @Inject constructor(
         loadNewGame()
     }
 
+    fun onShowWinners() {
+
+        viewModelScope.launch {
+            val list: List<GameResults> = mutableListOf()
+            onRequestResults.invoke(COLLECT_ALL_WINNERS).collect {
+
+            }
+        }
+    }
+
     fun loadNewGame() {
         uiState.value = UIResponce.Loading(LOADING)
-        resultState.value = UIResponce.Result(DEFAULT_RESULT)
+        resultState.value = UIResponce.Result(INITIAL_RESULT)
     }
 
     fun setGame(level: Level) {
         viewModelScope.launch {
-            onUserResponceUseCase.invoke(level, null)
+            onUserResponceUseCase.invoke(level, THIS_PARAM_IS_OKAY)
             uiState.value = UIResponce.Circular(LOADING)
             delay(SECOND)
             onSetTimer()
@@ -51,7 +61,7 @@ class MainViewModel @Inject constructor(
 
     fun onWrongAnswer() {
         viewModelScope.launch {
-            onUserResponceUseCase.invoke(null, null)
+            onUserResponceUseCase.invoke(THIS_PARAM_IS_OKAY, THIS_PARAM_IS_OKAY)
             onRequestScore()
             delay(WAIT_A_LITTLE)
             onRequestQuestion()
@@ -61,7 +71,7 @@ class MainViewModel @Inject constructor(
     fun onRightAnswer(timeSpend: Long) {
         viewModelScope.launch {
             uiState.value = UIResponce.Right(LOADING)
-            onUserResponceUseCase.invoke(null, timeSpend = timeSpend)
+            onUserResponceUseCase.invoke(THIS_PARAM_IS_OKAY, timeSpend = timeSpend)
             onRequestScore()
             delay(WAIT_A_LITTLE)
             if (timeSpend > INITIAL) {
@@ -84,12 +94,11 @@ class MainViewModel @Inject constructor(
 
     private fun onRequestScore() {
         viewModelScope.launch {
-            onRequestResults.invoke().collect {
+            onRequestResults.invoke(COLLECT_IN_GAME_RESULT).collect {
                 if (it.isWinner != null) {
                     uiState.value = UIResponce.Circular(LOADING)
                     delay(SECOND)
-                    uiState.value = UIResponce.ShowScores(listOf(it))  // list with 1
-                    // HERE DB UI ENTRANCE
+                    uiState.value = UIResponce.ShowScores(listOf(it))
                 } else {
                     resultState.value = UIResponce.Result(it)
                 }
@@ -116,6 +125,8 @@ class MainViewModel @Inject constructor(
     }
 
     companion object {
+        private val COLLECT_IN_GAME_RESULT = null
+        private val COLLECT_ALL_WINNERS = Unit
         private const val GAME_TIME = 25
         private const val IS_GAME_OVER = -1L
         private const val INITIAL = 0
@@ -123,11 +134,13 @@ class MainViewModel @Inject constructor(
         private const val WAIT_A_LITTLE = 100L
         private const val TIMER_TAG = "time left : "
         private val LOADING = Unit
-        private val DEFAULT_RESULT = GameResults(
+        private val THIS_PARAM_IS_OKAY = null
+        private val INITIAL_RESULT = GameResults(
             null,
             null,
             null,
             INITIAL,
+            null,
             null
         )
     }

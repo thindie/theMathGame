@@ -46,6 +46,6 @@ object GameLogicActorImpl : GameLogicActor {
 
     override fun initMathGameEngine(responce: OnUserResponceUseCase.Responce.Setting) {
         questionGenerator = QuestionGenerator.build(responce)
-        resultInGameBuilder = ResultInGameBuilder.build(questionGenerator.shareGamesettings())
+        resultInGameBuilder = ResultInGameBuilder.build(questionGenerator.getGameSettings())
     }
 }

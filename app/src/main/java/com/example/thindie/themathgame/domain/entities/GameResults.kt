@@ -6,6 +6,7 @@ data class GameResults(
     val totalQuestions: Int?,
     val isWinner: Boolean?,
     val gameScore: Int,
-    val winRate: Int?
+    val winRate: Int?,
+    val name: String?
 )
 
