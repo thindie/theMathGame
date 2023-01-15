@@ -15,12 +15,6 @@ class ResultInGameBuilder(
     private val answerCollector = mutableListOf<AnswerScoreCounter>()
     private val flowList = mutableListOf<Flow<GameResults>>()
 
-    private fun gameOver(gameResults: GameResults): Flow<GameResults> {
-
-        TODO()
-        // gameLogicActor.onResult(gameResults)
-    }
-
     fun flowOfResults(): Flow<GameResults> {
         if (!flowList.isEmpty()) return flowList[INITIAL]
 
@@ -44,7 +38,8 @@ class ResultInGameBuilder(
 
             } else {
                 IS_GAME_OVER.apply {
-                    countGameOverResults()
+                    calculateResult(countGameOverResults())
+                    return
                 }
             }
 
@@ -52,18 +47,19 @@ class ResultInGameBuilder(
         } else {
             answerCollector.add(AnswerScoreCounter.WrongAnswer(-100))
         }
-        calculateResult()
+        calculateResult(null)
     }
 
-    private fun calculateResult() {
+    private fun calculateResult(gameResults: GameResults?) {
 
-        val results = GameResults(
-            null,
-            null,
-            null,
-            gameScore = collectAllScoresInAnswerCollector(),
-            null
-        )
+        val results = gameResults
+            ?: GameResults(
+                null,
+                null,
+                null,
+                gameScore = collectAllScoresInAnswerCollector(),
+                null
+            )
 
         if (!flowList.isEmpty()) {
             flowList[INITIAL] = (
@@ -121,6 +117,7 @@ class ResultInGameBuilder(
     }
 
     companion object {
+       private const val IS_GAME_OVER = -1
         private const val BECOME_PERCENT = 100
         private const val SCORE_DELIMETER = 100
         private const val TOP_SCORE_LEVEL = 100
@@ -130,7 +127,6 @@ class ResultInGameBuilder(
         private const val LOW_SCORE = 50
         private const val TOP_LEVEL_AMPLIFIER = 2.5
         private const val HARD_LEVEL_AMPLIFIER = 1.7
-        private const val IS_GAME_OVER = -1
         private const val WRONG_ANSWER = 0
         private const val INITIAL = 0
         private const val NEVERMIND = 1.0

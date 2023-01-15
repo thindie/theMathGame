@@ -21,8 +21,9 @@ class MainViewModel @Inject constructor(
     private val onRequestResults: OnRequestResultUseCase
 ) : ViewModel() {
 
-    val _uiState: MutableStateFlow<UIResponce> = MutableStateFlow(UIResponce.Loading(Unit))
-    val _resultState: MutableStateFlow<UIResponce.Result> =
+    val uiState: MutableStateFlow<UIResponce> = MutableStateFlow(UIResponce.Loading(Unit))
+    val timerState: MutableStateFlow<String> = MutableStateFlow("time left : ")
+    val resultState: MutableStateFlow<UIResponce.Result> =
         MutableStateFlow(
             UIResponce.Result(
                 GameResults(
@@ -36,14 +37,15 @@ class MainViewModel @Inject constructor(
         )
 
     init {
-        _uiState.value = UIResponce.Loading(Unit)
+        uiState.value = UIResponce.Loading(Unit)
     }
 
     fun setGame(level: Level) {
         viewModelScope.launch {
             onUserResponceUseCase.invoke(level, null)
-            _uiState.value = UIResponce.Circular(Unit)
+            uiState.value = UIResponce.Circular(Unit)
             delay(1000)
+            onSetTimer()
             onRequestQuestion()
         }
     }
@@ -59,11 +61,25 @@ class MainViewModel @Inject constructor(
 
     fun onRightAnswer(timeSpend: Long) {
         viewModelScope.launch {
-            _uiState.value = UIResponce.Right(Unit)
+            uiState.value = UIResponce.Right(Unit)
             onUserResponceUseCase.invoke(null, timeSpend = timeSpend)
             onRequestScore()
             delay(40)
-            onRequestQuestion()
+            if (timeSpend > 0) {
+                onRequestQuestion()
+            }
+        }
+    }
+
+    private fun onSetTimer() {
+        var timer = GAME_TIME
+        viewModelScope.launch {
+            do {
+                delay(1000)
+                timerState.value = String.format("time left : %d", timer--)
+            } while (timer > -1)
+            onRightAnswer(IS_GAME_OVER)
+            uiState.value = UIResponce.Loading(Unit)
         }
     }
 
@@ -72,9 +88,8 @@ class MainViewModel @Inject constructor(
             onRequestResults.invoke().collect {
                 if (it.isWinner != null) {
                     TODO()
-                }
-                else{
-                    _resultState.value = UIResponce.Result(it)
+                } else {
+                    resultState.value = UIResponce.Result(it)
                 }
             }
 
@@ -84,7 +99,7 @@ class MainViewModel @Inject constructor(
     private fun onRequestQuestion() {
         viewModelScope.launch {
             onUserRequestUseCase.invoke().collect {
-                _uiState.value = UIResponce.AskQuestion(it)
+                uiState.value = UIResponce.AskQuestion(it)
             }
         }
     }
@@ -99,5 +114,9 @@ class MainViewModel @Inject constructor(
         data class Loading(val unit: Unit) : UIResponce()
     }
 
+    companion object {
+        private const val GAME_TIME = 25
+        private const val IS_GAME_OVER = -1L
+    }
 
 }

@@ -7,8 +7,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.thindie.themathgame.domain.entities.Question
@@ -21,15 +20,27 @@ fun GamingPlace(
     onClick: (Long?) -> Unit
 ) {
 
-    val toShowScores = viewModel._resultState.collectAsState().value.gameResults.gameScore
+    val toShowScores = viewModel
+        .resultState
+        .collectAsState()
+        .value.gameResults
+        .gameScore
+
+    val ticks = viewModel.timerState
+        .collectAsState()
+        .value
+
 
     val modifier = Modifier
         .fillMaxWidth()
         .height(350.dp)
+
+
     Surface(color = MaterialTheme.colorScheme.surface) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(modifier = modifier) {
                 Column() {
+                    Text(text = ticks)
                     Spacer(modifier = Modifier.weight(0.3f))
                     Row() {
                         Spacer(modifier = Modifier.weight(0.1f))
