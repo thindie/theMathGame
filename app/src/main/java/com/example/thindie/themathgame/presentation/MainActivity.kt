@@ -4,15 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.thindie.presentation.ui.composables.Place
 import com.example.thindie.themathgame.presentation.theme.MathGameTheme
+import com.example.thindie.themathgame.presentation.theme.composables.Circular
 import com.example.thindie.themathgame.presentation.theme.composables.GamingPlace
 import com.example.thindie.themathgame.presentation.theme.composables.Right
+import com.example.thindie.themathgame.presentation.theme.composables.ShowGameResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -30,14 +31,14 @@ class MainActivity : ComponentActivity() {
                             setContent {
                                 MathGameTheme {
                                     Place(null)
-                                    { level -> viewModel.setGame(level) } // level -> Level
+                                    { level -> viewModel.setGame(level) }
                                 }
                             }
                         }
                         is MainViewModel.UIResponce.Circular -> {
                             setContent {
                                 MathGameTheme {
-                                    CircularProgressIndicator()
+                                    Circular()
                                 }
                             }
 
@@ -67,12 +68,25 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
+                        is MainViewModel.UIResponce.ShowScores -> {
+                            val list = it.list
+                            setContent {
+                                MathGameTheme {
+                                    if (list.size > 1) {
+
+                                    } else ShowGameResult(
+                                        list,
+                                        onClickAll = {},
+                                        onClickBack = { viewModel.loadNewGame() })
+                                }
+                            }
+                        }
+
                         else -> {}
                     }
                 }
             }
         }
     }
-
 }
 

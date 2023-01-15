@@ -61,6 +61,8 @@ class ResultInGameBuilder(
                 null
             )
 
+        onNewGame(gameResults)
+
         if (!flowList.isEmpty()) {
             flowList[INITIAL] = (
                     flow { emit(results) })
@@ -68,6 +70,10 @@ class ResultInGameBuilder(
             flowList.add(flow { emit(results) })
         }
 
+    }
+
+    private fun onNewGame(gameResults: GameResults?) {
+        if (gameResults != null) answerCollector.clear()
     }
 
     private fun collectAllScoresInAnswerCollector(): Int {
@@ -82,14 +88,14 @@ class ResultInGameBuilder(
         return scores
     }
 
-    private fun countGameOverResults() : GameResults{
+    private fun countGameOverResults(): GameResults {
         val solvedQuestions = answerCollector.filter {
             it is AnswerScoreCounter.RightAnswer
         }.size
         val totalQuestions = answerCollector.size
         val gameScore = collectAllScoresInAnswerCollector()
-        val winRate = (( solvedQuestions * NEVERMIND / totalQuestions ) * BECOME_PERCENT).toInt()
-        return GameResults(solvedQuestions,totalQuestions,true, gameScore, winRate)
+        val winRate = ((solvedQuestions * NEVERMIND / totalQuestions) * BECOME_PERCENT).toInt()
+        return GameResults(solvedQuestions, totalQuestions, true, gameScore, winRate)
     }
 
     private fun scoreCalculator(time: Long, gameSettings: GameSettings): Int {
@@ -117,15 +123,15 @@ class ResultInGameBuilder(
     }
 
     companion object {
-       private const val IS_GAME_OVER = -1
+        private const val IS_GAME_OVER = -1
         private const val BECOME_PERCENT = 100
         private const val SCORE_DELIMETER = 100
-        private const val TOP_SCORE_LEVEL = 100
-        private const val MEDIUM_SCORE_LEVEL = 200
+        private const val TOP_SCORE_LEVEL = 8
+        private const val MEDIUM_SCORE_LEVEL = 12
         private const val TOP_SCORE = 100
-        private const val MEDIUM_SCORE = 75
+        private const val MEDIUM_SCORE = 155
         private const val LOW_SCORE = 50
-        private const val TOP_LEVEL_AMPLIFIER = 2.5
+        private const val TOP_LEVEL_AMPLIFIER = 2.7
         private const val HARD_LEVEL_AMPLIFIER = 1.7
         private const val WRONG_ANSWER = 0
         private const val INITIAL = 0

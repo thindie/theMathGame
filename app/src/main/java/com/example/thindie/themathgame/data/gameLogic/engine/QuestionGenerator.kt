@@ -74,10 +74,10 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
         val list = hashSetOf<Int>()
         list.add(solution)
 
-        for (it in solution until solution + 3) {
+        for (it in solution until solution + SOLUTIONS_RANGE) {
             list.add(it)
         }
-        for (it in solution downTo solution - 3) {
+        for (it in solution downTo solution - SOLUTIONS_RANGE) {
             list.add(it)
         }
         return Question(
@@ -98,12 +98,12 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
             return QuestionGenerator(level)
         }
 
-
+        private const val SOLUTIONS_RANGE = 3
         private const val MIN_VALUE = 2
         private const val TEST = 5
-        private const val EASY = 8
-        private const val NORMAL = 15
-        private const val HARD = 20
+        private const val EASY = 5
+        private const val NORMAL = 10
+        private const val HARD = 25
     }
 }
 
