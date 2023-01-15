@@ -9,5 +9,5 @@ interface GameLogicActor {
     suspend fun onAnswer(task : Flow<OnUserResponceUseCase.Responce>)
     fun onQuestion(): Flow<Question>
     fun onResult(): Flow<GameResults>
-    fun initQuestionGeneratorAndResultBuilder(responce: OnUserResponceUseCase.Responce.Setting)
+    fun initMathGameEngine(responce: OnUserResponceUseCase.Responce.Setting)
 }

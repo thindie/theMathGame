@@ -1,5 +1,6 @@
 package com.example.thindie.themathgame.data
 
+import android.util.Log
 import com.example.thindie.themathgame.data.gameLogic.GameLogicActor
 import com.example.thindie.themathgame.domain.entities.GameResults
 import com.example.thindie.themathgame.domain.entities.Question
@@ -24,7 +25,7 @@ class MathGameRepositoryImpl @Inject constructor(private val gameLogicActor: Gam
     override suspend fun onResult(): Flow<GameResults> {
         gameLogicActor.onResult().collect {
             if (it.isWinner != null) {
-                //here will be DB TODO()
+                 Log.d("Service_tag", "winner")
             }
         }
         return gameLogicActor.onResult()

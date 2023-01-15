@@ -10,7 +10,6 @@ import java.util.*
 class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Setting) {
 
     private val gameSettings: GameSettings = initGameSettings()
-    
 
     private fun initGameSettings(): GameSettings {
         when (gotLevel.level) {
@@ -18,7 +17,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 return GameSettings(
                     7,
                     3,
-                    50,
+
                     Level.TEST
                 )
             }
@@ -26,7 +25,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 return GameSettings(
                     25,
                     10,
-                    50,
+
                     Level.EASY
                 )
             }
@@ -34,7 +33,7 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 return GameSettings(
                     35,
                     20,
-                    70,
+
                     Level.NORMAl
                 )
             }
@@ -42,12 +41,11 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
                 return GameSettings(
                     35,
                     25,
-                    90,
+
                     Level.HARD
                 )
             }
         }
-        return throw RuntimeException("GameSetting isn't init")
     }
 
     fun generateQuestion(): Question {
@@ -90,9 +88,8 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
         )
     }
 
-    fun shareGamesettings(): GameSettings {
-        return gameSettings
-    }
+    fun shareGamesettings(): GameSettings = gameSettings
+
 
     companion object {
         fun build(
@@ -101,14 +98,12 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
             return QuestionGenerator(level)
         }
 
-         
+
         private const val MIN_VALUE = 2
         private const val TEST = 5
         private const val EASY = 8
         private const val NORMAL = 15
         private const val HARD = 20
     }
-
 }
-
 

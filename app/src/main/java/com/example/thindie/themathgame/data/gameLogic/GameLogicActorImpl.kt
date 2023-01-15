@@ -19,11 +19,10 @@ object GameLogicActorImpl : GameLogicActor {
     private lateinit var resultInGameBuilder: ResultInGameBuilder
 
     override suspend fun onAnswer(task: Flow<OnUserResponceUseCase.Responce>) {
-
         task.collect { responce ->
             when (responce) {
                 is OnUserResponceUseCase.Responce.Setting -> {
-                    initQuestionGeneratorAndResultBuilder(responce)
+                    initMathGameEngine(responce)
                 }
                 else -> {
                     resultInGameBuilder.collectScore(responce)
@@ -41,14 +40,12 @@ object GameLogicActorImpl : GameLogicActor {
         }.flowOn(Dispatchers.IO)
     }
 
-
     override fun onResult(): Flow<GameResults> {
         return resultInGameBuilder.flowOfResults()
     }
 
-    override fun initQuestionGeneratorAndResultBuilder(responce: OnUserResponceUseCase.Responce.Setting) {
+    override fun initMathGameEngine(responce: OnUserResponceUseCase.Responce.Setting) {
         questionGenerator = QuestionGenerator.build(responce)
-
         resultInGameBuilder = ResultInGameBuilder.build(questionGenerator.shareGamesettings())
     }
 }

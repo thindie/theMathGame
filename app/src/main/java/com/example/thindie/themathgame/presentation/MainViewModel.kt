@@ -1,5 +1,6 @@
 package com.example.thindie.themathgame.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.thindie.themathgame.domain.entities.GameResults
@@ -22,7 +23,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: MutableStateFlow<UIResponce> = MutableStateFlow(UIResponce.Loading(Unit))
-    val timerState: MutableStateFlow<String> = MutableStateFlow("time left : ")
+    val timerState: MutableStateFlow<String> = MutableStateFlow(TIMER_TAG)
     val resultState: MutableStateFlow<UIResponce.Result> =
         MutableStateFlow(
             UIResponce.Result(
@@ -30,7 +31,7 @@ class MainViewModel @Inject constructor(
                     null,
                     null,
                     null,
-                    0,
+                    INITIAL,
                     null
                 )
             )
@@ -44,7 +45,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             onUserResponceUseCase.invoke(level, null)
             uiState.value = UIResponce.Circular(Unit)
-            delay(1000)
+            delay(SECOND)
             onSetTimer()
             onRequestQuestion()
         }
@@ -54,7 +55,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             onUserResponceUseCase.invoke(null, null)
             onRequestScore()
-            delay(40)
+            delay(WAIT_A_LITTLE)
             onRequestQuestion()
         }
     }
@@ -64,8 +65,8 @@ class MainViewModel @Inject constructor(
             uiState.value = UIResponce.Right(Unit)
             onUserResponceUseCase.invoke(null, timeSpend = timeSpend)
             onRequestScore()
-            delay(40)
-            if (timeSpend > 0) {
+            delay(WAIT_A_LITTLE)
+            if (timeSpend > INITIAL) {
                 onRequestQuestion()
             }
         }
@@ -75,11 +76,11 @@ class MainViewModel @Inject constructor(
         var timer = GAME_TIME
         viewModelScope.launch {
             do {
-                delay(1000)
+                delay(SECOND)
                 timerState.value = String.format("time left : %d", timer--)
-            } while (timer > -1)
+            } while (timer > IS_GAME_OVER)
+
             onRightAnswer(IS_GAME_OVER)
-            uiState.value = UIResponce.Loading(Unit)
         }
     }
 
@@ -87,7 +88,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             onRequestResults.invoke().collect {
                 if (it.isWinner != null) {
-                    TODO()
+                   Log.d("Service_tag", "Winner im vm")
                 } else {
                     resultState.value = UIResponce.Result(it)
                 }
@@ -115,8 +116,12 @@ class MainViewModel @Inject constructor(
     }
 
     companion object {
-        private const val GAME_TIME = 25
+        private const val GAME_TIME = 3
         private const val IS_GAME_OVER = -1L
+        private const val INITIAL = 0
+        private const val SECOND = 1000L
+        private const val WAIT_A_LITTLE = 40L
+        private const val TIMER_TAG = "time left : "
     }
 
 }
