@@ -9,8 +9,19 @@ class GameResultMapper @Inject constructor() {
             gameResults.name ?: throw Exception("Where is my name?"),
             gameResults.solvedQuestions ?: throw Exception("Where is my SQ?"),
             gameResults.totalQuestions ?: throw Exception("Where is my TQ?"),
-            gameResults.gameScore ?: throw Exception("Where is my GAMESCORE?"),
+            gameResults.gameScore,
             gameResults.winRate ?: throw Exception("Where is my WINRATE?"),
+        )
+    }
+
+    fun fromDAOToObj(gameResults: GameResultDbModel): GameResults {
+        return GameResults(
+            gameResults.solvedQuestions,
+            gameResults.totalQuestions ?: throw Exception("Where is my SQ?"),
+            true,
+            gameResults.gameScore,
+            gameResults.winRate,
+            gameResults.name
         )
     }
 

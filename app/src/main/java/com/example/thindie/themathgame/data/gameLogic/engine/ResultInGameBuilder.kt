@@ -62,8 +62,8 @@ class ResultInGameBuilder(
                 null,
                 null,
             )
+            onNewGame(gameResults)
 
-        onNewGame(gameResults)
 
         if (!flowList.isEmpty()) {
             flowList[INITIAL] = (

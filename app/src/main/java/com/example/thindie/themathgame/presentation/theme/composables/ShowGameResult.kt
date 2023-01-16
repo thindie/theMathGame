@@ -1,5 +1,6 @@
 package com.example.thindie.themathgame.presentation.theme.composables
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -8,6 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupPositionProvider
 import com.example.thindie.themathgame.domain.entities.GameResults
 
 
@@ -61,7 +64,13 @@ fun ShowGameResult(list: List<GameResults>, onClickBack: () -> Unit, onClickAll:
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
-                        onClick = { onClickAll() },
+                        onClick = {
+                            try {
+                                onClickAll()
+                            } catch (e: java.lang.IndexOutOfBoundsException) {
+                                onClickBack()
+                            }
+                        },
                         modifier = Modifier
                             .padding(20.dp)
                             .size(80.dp, 60.dp)

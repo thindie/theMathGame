@@ -8,7 +8,12 @@ import javax.inject.Inject
 
 
 class OnRequestResultUseCase @Inject constructor(private val mathGameRepository: MathGameRepository) {
-    suspend operator fun invoke(unit: Unit?): Flow<GameResults> {
-        return mathGameRepository.onResult(unit).flowOn(Dispatchers.Default)
+    suspend operator fun invoke(showAllScores: Unit?): Flow<GameResults> {
+        if (showAllScores == null) {
+            return mathGameRepository.onResult(null)
+                .flowOn(Dispatchers.Default)
+        }
+        return mathGameRepository.onResult(showAllScores)
+            .flowOn(Dispatchers.Default)
     }
 }

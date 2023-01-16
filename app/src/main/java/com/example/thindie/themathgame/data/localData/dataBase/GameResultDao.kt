@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface GameResultDao {
     @Query("SELECT * FROM results")
-    fun getAll() : Flow<GameResultDbModel>
+    fun getAll() : Flow<List<GameResultDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addResult(resultDbModel: GameResultDbModel)
+     fun addResult(resultDbModel: GameResultDbModel)
 }

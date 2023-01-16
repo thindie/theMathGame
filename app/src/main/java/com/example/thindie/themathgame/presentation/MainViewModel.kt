@@ -6,11 +6,14 @@ import com.example.thindie.themathgame.domain.entities.GameResults
 import com.example.thindie.themathgame.domain.entities.Level
 import com.example.thindie.themathgame.domain.entities.Question
 import com.example.thindie.themathgame.domain.useCase.OnRequestResultUseCase
+import com.example.thindie.themathgame.domain.useCase.OnSaveDataUseCase
 import com.example.thindie.themathgame.domain.useCase.OnUserRequestUseCase
 import com.example.thindie.themathgame.domain.useCase.OnUserResponceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +21,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val onUserRequestUseCase: OnUserRequestUseCase,
     private val onUserResponceUseCase: OnUserResponceUseCase,
-    private val onRequestResults: OnRequestResultUseCase
+    private val onRequestResults: OnRequestResultUseCase,
+    private val onSaveDataUseCase: OnSaveDataUseCase<GameResults>
 ) : ViewModel() {
 
     val uiState: MutableStateFlow<UIResponce> = MutableStateFlow(UIResponce.Loading(LOADING))
@@ -35,13 +39,14 @@ class MainViewModel @Inject constructor(
     }
 
     fun onShowWinners() {
-
+        val list: MutableList<GameResults> = mutableListOf()
+        uiState.value = UIResponce.Loading(LOADING)
         viewModelScope.launch {
-            val list: List<GameResults> = mutableListOf()
             onRequestResults.invoke(COLLECT_ALL_WINNERS).collect {
-
+                list.add(it)
             }
         }
+        uiState.value = UIResponce.ShowScores(list)
     }
 
     fun loadNewGame() {
@@ -51,9 +56,8 @@ class MainViewModel @Inject constructor(
 
     fun setGame(level: Level) {
         viewModelScope.launch {
-            onUserResponceUseCase.invoke(level, THIS_PARAM_IS_OKAY)
-            uiState.value = UIResponce.Circular(LOADING)
-            delay(SECOND)
+            onUserResponceUseCase.invoke(level, THIS_PARAM_IS_NOT_NEED)
+
             onSetTimer()
             onRequestQuestion()
         }
@@ -61,7 +65,7 @@ class MainViewModel @Inject constructor(
 
     fun onWrongAnswer() {
         viewModelScope.launch {
-            onUserResponceUseCase.invoke(THIS_PARAM_IS_OKAY, THIS_PARAM_IS_OKAY)
+            onUserResponceUseCase.invoke(THIS_PARAM_IS_NOT_NEED, THIS_PARAM_IS_NOT_NEED)
             onRequestScore()
             delay(WAIT_A_LITTLE)
             onRequestQuestion()
@@ -71,7 +75,7 @@ class MainViewModel @Inject constructor(
     fun onRightAnswer(timeSpend: Long) {
         viewModelScope.launch {
             uiState.value = UIResponce.Right(LOADING)
-            onUserResponceUseCase.invoke(THIS_PARAM_IS_OKAY, timeSpend = timeSpend)
+            onUserResponceUseCase.invoke(THIS_PARAM_IS_NOT_NEED, timeSpend = timeSpend)
             onRequestScore()
             delay(WAIT_A_LITTLE)
             if (timeSpend > INITIAL) {
@@ -89,21 +93,35 @@ class MainViewModel @Inject constructor(
             } while (timer > IS_GAME_OVER)
 
             onRightAnswer(IS_GAME_OVER)
+           loading()
         }
     }
 
     private fun onRequestScore() {
         viewModelScope.launch {
-            onRequestResults.invoke(COLLECT_IN_GAME_RESULT).collect {
-                if (it.isWinner != null) {
+            onRequestResults.invoke(COLLECT_IN_GAME_RESULT).collect { gameResult ->
+                if (gameResult.name != REQUEST_NAME) {
+                    if (gameResult.isWinner == null) {
+                        resultState.value = UIResponce.Result(gameResult)
+                    } else {
+                        uiState.value = UIResponce.Circular(LOADING)
+                        delay(SECOND)
+                        uiState.value = UIResponce.ShowScores(listOf(gameResult))
+                    }
+                }
+                if (gameResult.name == REQUEST_NAME) {
                     uiState.value = UIResponce.Circular(LOADING)
                     delay(SECOND)
-                    uiState.value = UIResponce.ShowScores(listOf(it))
-                } else {
-                    resultState.value = UIResponce.Result(it)
+
+                    uiState.value = UIResponce.InputWinnerName(gameResult)
                 }
+
             }
         }
+    }
+    private suspend fun  loading(){
+        uiState.value = UIResponce.Circular(LOADING)
+        delay(SECOND)
     }
 
     private fun onRequestQuestion() {
@@ -114,10 +132,22 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onAddWinner(gameResults: GameResults) {
+        viewModelScope.launch {
+            loading()
+            val flow: Flow<GameResults> = flow {
+                emit(gameResults)
+            }
+            onSaveDataUseCase.invoke(flow)
+        }
+        loadNewGame()
+
+    }
+
     sealed class UIResponce {
         data class AskQuestion(val question: Question) : UIResponce()
         data class Circular(val unit: Unit) : UIResponce()
-        data class Wrong(val unit: Unit) : UIResponce()
+        data class InputWinnerName(val gameResults: GameResults) : UIResponce()
         data class Right(val unit: Unit) : UIResponce()
         data class Result(val gameResults: GameResults) : UIResponce()
         data class ShowScores(val list: List<GameResults>) : UIResponce()
@@ -125,16 +155,17 @@ class MainViewModel @Inject constructor(
     }
 
     companion object {
-        private val COLLECT_IN_GAME_RESULT = null
+        private const val REQUEST_NAME = "requestName"
+        private val COLLECT_IN_GAME_RESULT: Unit? = null
         private val COLLECT_ALL_WINNERS = Unit
-        private const val GAME_TIME = 25
+        private const val GAME_TIME = 8
         private const val IS_GAME_OVER = -1L
         private const val INITIAL = 0
         private const val SECOND = 1000L
-        private const val WAIT_A_LITTLE = 100L
+        private const val WAIT_A_LITTLE = 50L
         private const val TIMER_TAG = "time left : "
         private val LOADING = Unit
-        private val THIS_PARAM_IS_OKAY = null
+        private val THIS_PARAM_IS_NOT_NEED = null
         private val INITIAL_RESULT = GameResults(
             null,
             null,

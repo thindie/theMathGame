@@ -10,10 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.thindie.presentation.ui.composables.Place
 import com.example.thindie.themathgame.presentation.theme.MathGameTheme
-import com.example.thindie.themathgame.presentation.theme.composables.Circular
-import com.example.thindie.themathgame.presentation.theme.composables.GamingPlace
-import com.example.thindie.themathgame.presentation.theme.composables.Right
-import com.example.thindie.themathgame.presentation.theme.composables.ShowGameResult
+import com.example.thindie.themathgame.presentation.theme.composables.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -72,16 +69,29 @@ class MainActivity : ComponentActivity() {
                             val list = it.list
                             setContent {
                                 MathGameTheme {
-                                    if (list.size > 1) {
-
+                                    if (list.isNotEmpty() && list.size > 1) {
+                                        //db!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                     } else ShowGameResult(
                                         list,
-                                        onClickAll = {},
+                                        onClickAll = {
+                                            viewModel.onShowWinners()
+
+                                        },
                                         onClickBack = { viewModel.loadNewGame() })
                                 }
                             }
                         }
-
+                        is MainViewModel.UIResponce.InputWinnerName -> {
+                            setContent {
+                                MathGameTheme {
+                                    InputWinner(onHoistClick = { gameResults ->
+                                        viewModel.onAddWinner(
+                                            gameResults
+                                        )
+                                    }, it.gameResults)
+                                }
+                            }
+                        }
                         else -> {}
                     }
                 }

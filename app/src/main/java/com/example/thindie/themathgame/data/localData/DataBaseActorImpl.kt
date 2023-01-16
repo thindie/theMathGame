@@ -1,10 +1,15 @@
 package com.example.thindie.themathgame.data.localData
 
 import com.example.thindie.themathgame.data.localData.dataBase.GameResultDao
+import com.example.thindie.themathgame.data.localData.dataBase.GameResultDbModel
 import com.example.thindie.themathgame.data.localData.dataBase.GameResultMapper
 import com.example.thindie.themathgame.domain.entities.GameResults
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class DataBaseActorImpl @Inject constructor(
     private val gameResultMapper: GameResultMapper,
@@ -14,33 +19,63 @@ class DataBaseActorImpl @Inject constructor(
     override suspend fun checkResult(gameResults: GameResults): Boolean {
         var add = false
         if (gameResults.gameScore > CLUB_ENTRANCE) {
-            gameResultDao.getAll().collect {
-                if (it.gameScore < gameResults.gameScore) {
+            gameResultDao.getAll().collect { dbList ->
+                if (!dbList.isEmpty()) {
+                    if (dbList.none {
+                            it.gameScore < gameResults.gameScore
+                        }) {
+                        add = true
+                    }
+                }
+                if (dbList.isEmpty()) {
                     add = true
                 }
+
             }
         }
+
         return add
     }
 
+
     override suspend fun addGameResult(gameResults: Flow<GameResults>) {
+        var gameResultsDao : GameResultDbModel? = null
         gameResults.collect {
-            if (checkResult(it)) {
-                if (it.name == null) {
-                    //ask name
-                } else {
-                    gameResultDao.addResult(gameResultMapper.fromObjToDao(it))
+            if (it.name != null) {
+                gameResultsDao = gameResultMapper.fromObjToDao(
+                    it.copy(
+                        solvedQuestions = it.solvedQuestions,
+                        totalQuestions = it.totalQuestions,
+                        isWinner = it.isWinner,
+                        gameScore = it.gameScore,
+                        winRate = it.winRate,
+                        name = it.name
+                    )
+                )
+
+            } else {
+                throw RuntimeException("SomethingWrong!")
+            }
+        }
+        withContext(context = Dispatchers.IO){
+            gameResultsDao?.let { gameResultDao.addResult(it) }
+        }
+    }
+
+
+    override suspend fun showAllWinners(): Flow<GameResults> {
+        return flow {
+            gameResultDao.getAll().collect {
+                it.forEach {
+                    emit(gameResultMapper.fromDAOToObj(it))
                 }
             }
         }
     }
 
-        override suspend fun showAllWinners(): Flow<GameResults> {
-            TODO()
-        }
 
-        companion object {
-            private const val CLUB_ENTRANCE = 800
-        }
-
+    companion object {
+        private const val CLUB_ENTRANCE = 100
     }
+
+}
