@@ -62,7 +62,7 @@ fun GameElement(
 
 
     val modifier = Modifier
-        .size(130.dp)
+        .size(110.dp)
         .padding(padding)
     ElevatedCard(
         modifier = modifier.clickable { if (answer == variant) onClick(time) else onClick(null) },
