@@ -21,16 +21,9 @@ import com.example.thindie.themathgame.domain.entities.GameResults
 fun InputWinner(onHoistClick: (GameResults) -> Unit, gameResults: GameResults) {
     val styleHead = MaterialTheme.typography.headlineLarge
     val styleDetails = MaterialTheme.typography.headlineSmall
+
     val text = remember {
         mutableStateOf("")
-    }
-
-    val onClickBack: (String) -> Unit = { string ->
-        onHoistClick(
-            gameResults.copy(
-                name = string
-            )
-        )
     }
 
 

@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface DataBaseActor {
     suspend fun checkResult(gameResults: GameResults) : Boolean
     suspend fun addGameResult(gameResults: Flow<GameResults>)
-    suspend fun showAllWinners(): Flow<GameResults>
+    suspend fun showAllWinners(): Flow<List<GameResults>>
 }

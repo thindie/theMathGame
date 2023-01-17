@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class DataBaseActorImpl @Inject constructor(
     private val gameResultMapper: GameResultMapper,
@@ -19,19 +18,8 @@ class DataBaseActorImpl @Inject constructor(
     override suspend fun checkResult(gameResults: GameResults): Boolean {
         var add = false
         if (gameResults.gameScore > CLUB_ENTRANCE) {
-            gameResultDao.getAll().collect { dbList ->
-                if (!dbList.isEmpty()) {
-                    if (dbList.none {
-                            it.gameScore < gameResults.gameScore
-                        }) {
-                        add = true
-                    }
-                }
-                if (dbList.isEmpty()) {
-                    add = true
-                }
-
-            }
+            //some logic
+            add = true
         }
 
         return add
@@ -39,7 +27,7 @@ class DataBaseActorImpl @Inject constructor(
 
 
     override suspend fun addGameResult(gameResults: Flow<GameResults>) {
-        var gameResultsDao : GameResultDbModel? = null
+        var gameResultsDao: GameResultDbModel? = null
         gameResults.collect {
             if (it.name != null) {
                 gameResultsDao = gameResultMapper.fromObjToDao(
@@ -57,25 +45,25 @@ class DataBaseActorImpl @Inject constructor(
                 throw RuntimeException("SomethingWrong!")
             }
         }
-        withContext(context = Dispatchers.IO){
+        withContext(context = Dispatchers.IO) {
             gameResultsDao?.let { gameResultDao.addResult(it) }
         }
     }
 
 
-    override suspend fun showAllWinners(): Flow<GameResults> {
+    override suspend fun showAllWinners(): Flow<List<GameResults>> {
+
         return flow {
             gameResultDao.getAll().collect {
-                it.forEach {
-                    emit(gameResultMapper.fromDAOToObj(it))
-                }
+                emit(gameResultMapper.fromDAOToObj(it))
+
             }
         }
     }
 
 
     companion object {
-        private const val CLUB_ENTRANCE = 100
+        private const val CLUB_ENTRANCE = 800
     }
 
 }

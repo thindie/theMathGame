@@ -14,15 +14,21 @@ class GameResultMapper @Inject constructor() {
         )
     }
 
-    fun fromDAOToObj(gameResults: GameResultDbModel): GameResults {
-        return GameResults(
-            gameResults.solvedQuestions,
-            gameResults.totalQuestions ?: throw Exception("Where is my SQ?"),
-            true,
-            gameResults.gameScore,
-            gameResults.winRate,
-            gameResults.name
-        )
+    fun fromDAOToObj(gameResultsDBModel: List<GameResultDbModel>): List<GameResults> {
+        val resultList = mutableListOf<GameResults>()
+        gameResultsDBModel.forEach { gameResults ->
+            resultList.add(
+                GameResults(
+                    gameResults.solvedQuestions,
+                    gameResults.totalQuestions ,
+                    true,
+                    gameResults.gameScore,
+                    gameResults.winRate,
+                    gameResults.name
+                )
+            )
+        }
+        return resultList
     }
 
 }

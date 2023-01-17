@@ -27,8 +27,12 @@ class MainActivity : ComponentActivity() {
                         is MainViewModel.UIResponce.Loading -> {
                             setContent {
                                 MathGameTheme {
-                                    Place(null)
-                                    { level -> viewModel.setGame(level) }
+                                    Place(
+                                        null,
+                                        onLevelClick = { level -> viewModel.setGame(level) }) {
+                                        viewModel.onShowSavedWinners()
+                                    }
+
                                 }
                             }
                         }
@@ -67,17 +71,26 @@ class MainActivity : ComponentActivity() {
                         }
                         is MainViewModel.UIResponce.ShowScores -> {
                             val list = it.list
+
                             setContent {
                                 MathGameTheme {
-                                    if (list.isNotEmpty() && list.size > 1) {
-                                        //db!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                    } else ShowGameResult(
-                                        list,
-                                        onClickAll = {
-                                            viewModel.onShowWinners()
+                                    if (!it.showAllWinners) {
+                                        ShowGameResult(
+                                            list,
+                                            onClickAll = {
+                                                viewModel.onShowSavedWinners()
+                                            },
+                                            onClickBack = {
+                                                viewModel.loadNewGame()
 
-                                        },
-                                        onClickBack = { viewModel.loadNewGame() })
+                                            })
+                                    }
+                                    if (it.showAllWinners) {
+                                        ShowWinners(list = list.asReversed()) {
+                                            viewModel.loadNewGame()
+                                        }
+                                    }
+
                                 }
                             }
                         }

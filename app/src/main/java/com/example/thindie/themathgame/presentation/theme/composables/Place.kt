@@ -7,9 +7,9 @@ import com.example.thindie.themathgame.presentation.theme.composables.LoadingPla
 
 
 @Composable
-fun Place(listOfVariants: List<Int>?, onLevelClick: (level: Level) -> Unit) {
+fun Place(listOfVariants: List<Int>?, onLevelClick: (level: Level) -> Unit, onWinner:  () -> Unit) {
     if (listOfVariants.isNullOrEmpty()) {
-        LoadingPlace(onLevelClick)
+        LoadingPlace(onLevelClick, onWinner)
     }
 
 }

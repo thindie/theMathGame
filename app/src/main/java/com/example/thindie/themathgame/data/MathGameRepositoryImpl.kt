@@ -31,20 +31,28 @@ class MathGameRepositoryImpl @Inject constructor(
     //check is winner and return result to UI - to show or to Save
     override suspend fun onResult(showAllScores: Unit?): Flow<GameResults> {
         if (showAllScores != null) {
-            return dataBaseActor.showAllWinners()
+            return flow {
+                dataBaseActor.showAllWinners().collect {
+                    it.forEach {
+                        this.emit(it)
+                    }
+                }
+            }
         }
+
 
         var requestOnUserData = false
         var gameResultsToSetName: GameResults? = null
 
         gameLogicActor.onResult().collect {
             if (it.isWinner == true) {
-                //if (dataBaseActor.checkResult(it)) { // if Result is record
+                if (dataBaseActor.checkResult(it)) { // if Result is record
                     requestOnUserData = true  //  obj to ask
                     gameResultsToSetName = it  //
                 }
             }
-        //
+        }
+
 
         if (requestOnUserData) return flow {
             val copyResult = gameResultsToSetName?.copy(

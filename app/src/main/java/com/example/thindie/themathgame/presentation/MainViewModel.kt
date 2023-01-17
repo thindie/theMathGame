@@ -10,11 +10,13 @@ import com.example.thindie.themathgame.domain.useCase.OnSaveDataUseCase
 import com.example.thindie.themathgame.domain.useCase.OnUserRequestUseCase
 import com.example.thindie.themathgame.domain.useCase.OnUserResponceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,16 +40,28 @@ class MainViewModel @Inject constructor(
         loadNewGame()
     }
 
-    fun onShowWinners() {
-        val list: MutableList<GameResults> = mutableListOf()
-        uiState.value = UIResponce.Loading(LOADING)
+    fun onShowSavedWinners() {
         viewModelScope.launch {
+            uiState.value = UIResponce.Circular(LOADING)
+            val list = mutableListOf<GameResults>()
+            withContext(Dispatchers.Main) {
+                delay(SECOND - WAIT_A_LITTLE)
+                if (list.size == 0) {
+                    uiState.value = UIResponce.Loading(LOADING)
+                }
+            }
             onRequestResults.invoke(COLLECT_ALL_WINNERS).collect {
                 list.add(it)
+                if (list.size == 1) {
+                    uiState.value = UIResponce.ShowScores(list, showAllWinners = false)
+                }
+                if (list.size > 1) {
+                    uiState.value = UIResponce.ShowScores(list, showAllWinners = true)
+                }
             }
         }
-        uiState.value = UIResponce.ShowScores(list)
     }
+
 
     fun loadNewGame() {
         uiState.value = UIResponce.Loading(LOADING)
@@ -93,7 +107,7 @@ class MainViewModel @Inject constructor(
             } while (timer > IS_GAME_OVER)
 
             onRightAnswer(IS_GAME_OVER)
-           loading()
+            loading()
         }
     }
 
@@ -106,7 +120,8 @@ class MainViewModel @Inject constructor(
                     } else {
                         uiState.value = UIResponce.Circular(LOADING)
                         delay(SECOND)
-                        uiState.value = UIResponce.ShowScores(listOf(gameResult))
+                        uiState.value =
+                            UIResponce.ShowScores(listOf(gameResult), showAllWinners = false)
                     }
                 }
                 if (gameResult.name == REQUEST_NAME) {
@@ -119,7 +134,8 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-    private suspend fun  loading(){
+
+    private suspend fun loading() {
         uiState.value = UIResponce.Circular(LOADING)
         delay(SECOND)
     }
@@ -150,7 +166,9 @@ class MainViewModel @Inject constructor(
         data class InputWinnerName(val gameResults: GameResults) : UIResponce()
         data class Right(val unit: Unit) : UIResponce()
         data class Result(val gameResults: GameResults) : UIResponce()
-        data class ShowScores(val list: List<GameResults>) : UIResponce()
+        data class ShowScores(val list: List<GameResults>, val showAllWinners: Boolean) :
+            UIResponce()
+
         data class Loading(val unit: Unit) : UIResponce()
     }
 
@@ -158,7 +176,7 @@ class MainViewModel @Inject constructor(
         private const val REQUEST_NAME = "requestName"
         private val COLLECT_IN_GAME_RESULT: Unit? = null
         private val COLLECT_ALL_WINNERS = Unit
-        private const val GAME_TIME = 8
+        private const val GAME_TIME = 25
         private const val IS_GAME_OVER = -1L
         private const val INITIAL = 0
         private const val SECOND = 1000L

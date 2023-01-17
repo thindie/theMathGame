@@ -4,7 +4,6 @@ import com.example.thindie.themathgame.domain.entities.GameSettings
 import com.example.thindie.themathgame.domain.entities.Level
 import com.example.thindie.themathgame.domain.entities.Question
 import com.example.thindie.themathgame.domain.useCase.OnUserResponceUseCase
-import java.util.*
 
 
 class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Setting) {
@@ -49,29 +48,54 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
     }
 
     fun generateQuestion(): Question {
-        val range = when (gameSettings.level) {
-            Level.TEST -> {
-                TEST
-            }
+
+
+        val shuffleList = mutableListOf<Int>()
+        val list = hashSetOf<Int>()
+        var visibleNumber = 0
+        var sum = 0
+        when (gameSettings.level) {
             Level.EASY -> {
-                EASY
+                for (i in 0..EASY) {
+                    shuffleList.add(i);
+                }
+                shuffleList.shuffle()
+                sum = shuffleList[0]
+                shuffleList.shuffle()
+                visibleNumber = shuffleList[1]
+
+
             }
             Level.NORMAl -> {
-                NORMAL
+                for (i in EASY..NORMAL) {
+                    shuffleList.add(i);
+                }
+                shuffleList.shuffle()
+                sum = shuffleList[0]
+                shuffleList.shuffle()
+                visibleNumber = shuffleList[1]
+
             }
             Level.HARD -> {
-                HARD
+                for (i in NORMAL..HARD) {
+                    shuffleList.add(i);
+                }
+                shuffleList.shuffle()
+                sum = shuffleList[0]
+                shuffleList.shuffle()
+                visibleNumber = shuffleList[1]
+
             }
+            else -> {}
+        }
+        if (sum < visibleNumber) {
+            val buffer = sum
+            sum = visibleNumber
+            visibleNumber = buffer
         }
 
-        val sum = (Random().nextInt(range) + MIN_VALUE) * 2
-        var visibleNumber =
-            (sum + MIN_VALUE) - Random().nextInt(sum - MIN_VALUE)
-        while (visibleNumber < MIN_VALUE) {
-            visibleNumber++
-        }
         val solution = sum - visibleNumber
-        val list = hashSetOf<Int>()
+
         list.add(solution)
 
         for (it in solution until solution + SOLUTIONS_RANGE) {
@@ -80,6 +104,8 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
         for (it in solution downTo solution - SOLUTIONS_RANGE) {
             list.add(it)
         }
+
+
         return Question(
             sum = sum,
             visibleNumber = visibleNumber,
@@ -99,11 +125,10 @@ class QuestionGenerator(private val gotLevel: OnUserResponceUseCase.Responce.Set
         }
 
         private const val SOLUTIONS_RANGE = 3
-        private const val MIN_VALUE = 2
-        private const val TEST = 5
-        private const val EASY = 5
-        private const val NORMAL = 10
-        private const val HARD = 25
+
+        private const val EASY = 6
+        private const val NORMAL = 20
+        private const val HARD = 60
     }
 }
 

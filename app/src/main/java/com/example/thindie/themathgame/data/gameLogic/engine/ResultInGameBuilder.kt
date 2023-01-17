@@ -1,5 +1,6 @@
 package com.example.thindie.themathgame.data.gameLogic.engine
 
+import android.annotation.SuppressLint
 import com.example.thindie.themathgame.domain.entities.GameResults
 import com.example.thindie.themathgame.domain.entities.GameSettings
 import com.example.thindie.themathgame.domain.entities.Level
@@ -51,6 +52,7 @@ class ResultInGameBuilder(
         calculateResult(null)
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun calculateResult(gameResults: GameResults?) {
 
         val results = gameResults
@@ -111,7 +113,7 @@ class ResultInGameBuilder(
 
         return if (timeSpend / SCORE_DELIMETER < TOP_SCORE_LEVEL) {
             (TOP_SCORE * amplifier).toInt()
-        } else if (timeSpend / SCORE_DELIMETER < MEDIUM_SCORE_LEVEL) {
+        } else if (timeSpend / SCORE_DELIMETER <= MEDIUM_SCORE_LEVEL) {
             (MEDIUM_SCORE * amplifier).toInt()
         } else {
             LOW_SCORE
@@ -128,13 +130,13 @@ class ResultInGameBuilder(
         private const val IS_GAME_OVER = -1
         private const val BECOME_PERCENT = 100
         private const val SCORE_DELIMETER = 100
-        private const val TOP_SCORE_LEVEL = 8
-        private const val MEDIUM_SCORE_LEVEL = 12
-        private const val TOP_SCORE = 100
+        private const val TOP_SCORE_LEVEL = 10
+        private const val MEDIUM_SCORE_LEVEL = 13
+        private const val TOP_SCORE = 300
         private const val MEDIUM_SCORE = 155
         private const val LOW_SCORE = 50
-        private const val TOP_LEVEL_AMPLIFIER = 2.7
-        private const val HARD_LEVEL_AMPLIFIER = 1.7
+        private const val TOP_LEVEL_AMPLIFIER = 3.6
+        private const val HARD_LEVEL_AMPLIFIER = 2.1
         private const val WRONG_ANSWER = 0
         private const val INITIAL = 0
         private const val NEVERMIND = 1.0

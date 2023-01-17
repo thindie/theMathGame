@@ -2,14 +2,11 @@ package com.example.thindie.themathgame.presentation.theme.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PeopleAlt
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -115,6 +112,44 @@ fun VisionElement(
                 modifier = Modifier.padding(top = 35.dp),
                 style = MaterialTheme.typography.headlineLarge
             )
+        }
+
+
+    }
+}
+
+@Composable
+fun LoadWinnersElement(
+    padding: PaddingValues,
+    onClick: () -> Unit,
+) {
+    val interactionSource = MutableInteractionSource()
+    val modifier = Modifier
+        .size(160.dp)
+        .padding(padding)
+    ElevatedCard(
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null
+        ) { onClick() }, shape = CircleShape
+    ) {
+        Box(
+            Modifier
+                .padding(12.dp)
+                .align(CenterHorizontally)
+
+        ) {
+            IconButton(
+                onClick = { onClick() },
+                modifier = Modifier.padding(top = 25.dp, start = 3.dp)
+            ) {
+                Column(verticalArrangement = Arrangement.Center) {
+                    Icon(imageVector = Icons.Default.PeopleAlt, contentDescription = "win")
+                    Text(text = "win")
+                }
+
+
+            }
         }
 
 

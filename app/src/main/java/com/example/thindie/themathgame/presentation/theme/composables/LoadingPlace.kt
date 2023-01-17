@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.example.thindie.themathgame.domain.entities.Level
 
 @Composable
-fun LoadingPlace(onClick: (level: Level) -> Unit) {
+fun LoadingPlace(onClick: (level: Level) -> Unit, onWinner: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
 
         Row(horizontalArrangement = Arrangement.End) {
@@ -21,8 +21,8 @@ fun LoadingPlace(onClick: (level: Level) -> Unit) {
 
             ) {
                 Spacer(modifier = Modifier.weight(0.4f))
-                LoadElement(header = "TEST", padding = PaddingValues(20.dp), onClick, Level.TEST)
-                LoadElement(header = "ЛЕГКО", padding = PaddingValues(20.dp), onClick, Level.EASY)
+                LoadWinnersElement(padding = PaddingValues(20.dp), onWinner)
+                LoadElement(header = "EASY", padding = PaddingValues(20.dp), onClick, Level.EASY)
                 Spacer(modifier = Modifier.weight(0.4f))
             }
             Column(
@@ -32,12 +32,12 @@ fun LoadingPlace(onClick: (level: Level) -> Unit) {
             ) {
                 Spacer(modifier = Modifier.weight(0.4f))
                 LoadElement(
-                    header = "НОРМАЛЬНО",
+                    header = "NORMAL",
                     padding = PaddingValues(20.dp),
                     onClick,
                     Level.NORMAl
                 )
-                LoadElement(header = "СЛОЖНО", padding = PaddingValues(20.dp), onClick, Level.HARD)
+                LoadElement(header = "HARD", padding = PaddingValues(20.dp), onClick, Level.HARD)
                 Spacer(modifier = Modifier.weight(0.4f))
             }
             Spacer(modifier = Modifier.weight(0.1f))
